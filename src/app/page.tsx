@@ -1,65 +1,138 @@
-import Image from "next/image";
+import Link from "next/link";
+import BottomNav from "@/components/BottomNav";
+import { unlockedAnimals } from "@/lib/animals";
 
-export default function Home() {
+const latestCatch = unlockedAnimals[0];
+
+export default function HomePage() {
+  const discovered = unlockedAnimals.length;
+  const total = 151;
+  const pct = Math.round((discovered / total) * 100);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="pb-28 min-h-screen bg-surface">
+      {/* Header */}
+      <header className="flex justify-between items-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background sticky top-0 z-40">
+        <span
+          className="material-symbols-outlined text-primary"
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          battery_charging_full
+        </span>
+        <h1 className="font-display text-[32px] font-extrabold text-primary tracking-tighter">
+          WildDex
+        </h1>
+        <span
+          className="material-symbols-outlined text-primary"
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          signal_cellular_alt
+        </span>
+      </header>
+
+      <main className="max-w-2xl mx-auto p-4 space-y-6 mt-2">
+        {/* Dex Progress */}
+        <section
+          className="bg-surface-container-high p-6 rounded-lg border-[3px] border-on-background hard-shadow"
+        >
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="font-display text-2xl font-bold text-on-background">
+              Dex Completion
+            </h2>
+            <span className="font-display text-2xl font-bold text-primary">
+              {discovered}/{total}
+            </span>
+          </div>
+          <div className="w-full h-7 border-[3px] border-on-background rounded-full overflow-hidden bg-surface-variant">
+            <div
+              className="h-full bg-primary relative"
+              style={{ width: `${pct}%` }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <div className="absolute inset-0 flex justify-evenly items-center">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="w-px h-full bg-black/20" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="font-sans text-sm text-on-surface-variant mt-2 text-center">
+            Gotta log &apos;em all! Keep exploring.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        </section>
+
+        {/* Latest Catch */}
+        <section>
+          <h2 className="font-display text-2xl font-bold text-on-background mb-2 px-2">
+            Latest Catch
+          </h2>
+          <Link href={`/animal/${latestCatch.id}`}>
+            <div
+              className="bg-secondary-container rounded-lg border-[3px] border-on-background hard-shadow overflow-hidden"
+            >
+              <div className="bg-secondary p-6 flex items-center justify-center border-b-[3px] border-on-background">
+                <span className="text-8xl">{latestCatch.emoji}</span>
+              </div>
+              <div className="p-4 bg-surface flex justify-between items-center">
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-on-background">
+                    {latestCatch.name}
+                  </h3>
+                  <p className="font-sans text-sm text-on-surface-variant">
+                    Caught in the {latestCatch.caughtLocation}
+                  </p>
+                </div>
+                <div className="bg-tertiary-container border-[2px] border-on-background px-2 py-1 rounded-full">
+                  <span className="font-display text-[12px] font-bold text-on-tertiary-container tracking-widest">
+                    RARE
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="grid grid-cols-2 gap-4">
+          <Link href="/scan">
+            <button className="w-full bg-primary text-on-primary font-display font-bold text-2xl py-4 px-2 rounded-lg border-[3px] border-on-background hard-shadow hard-shadow-active flex flex-col items-center justify-center gap-2 transition-all duration-75">
+              <span className="material-symbols-outlined text-[32px]">
+                photo_camera
+              </span>
+              SCAN
+            </button>
+          </Link>
+          <Link href="/map">
+            <button className="w-full bg-secondary text-on-secondary font-display font-bold text-2xl py-4 px-2 rounded-lg border-[3px] border-on-background hard-shadow hard-shadow-active flex flex-col items-center justify-center gap-2 transition-all duration-75">
+              <span className="material-symbols-outlined text-[32px]">map</span>
+              VIEW MAP
+            </button>
+          </Link>
+        </section>
+
+        {/* Tip Box */}
+        <section
+          className="bg-surface-container border-[3px] border-on-background rounded-lg p-6 hard-shadow relative"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-primary rounded-full border-[3px] border-on-background flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-on-primary">
+                info
+              </span>
+            </div>
+            <p className="font-sans text-lg text-on-background leading-loose">
+              Tip: Try scanning near bodies of water at dusk to find rare
+              aquatic species!
+            </p>
+          </div>
+          <div className="absolute bottom-2 right-2 animate-bounce">
+            <span className="material-symbols-outlined text-on-background">
+              arrow_drop_down
+            </span>
+          </div>
+        </section>
       </main>
+
+      <BottomNav />
     </div>
   );
 }
