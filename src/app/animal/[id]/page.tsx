@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
-import { animals, rarityColors, rarityLabels } from "@/lib/animals";
+import { rarityColors, rarityLabels } from "@/lib/animals";
+import { getSpeciesById } from "@/lib/supabase/queries";
 
 export default async function AnimalDetailPage({
   params,
@@ -9,20 +10,19 @@ export default async function AnimalDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const animal = animals.find((a) => a.id === id);
+  const animal = await getSpeciesById(id);
 
-  if (!animal || !animal.unlocked) {
+  if (!animal) {
     notFound();
   }
+
+  const isLocked = !animal.unlocked;
 
   return (
     <div className="pb-28 min-h-screen bg-surface">
       {/* Header */}
-      <header className="bg-surface text-primary font-display text-2xl font-bold border-b-[3px] border-on-background flex justify-between items-center w-full px-4 h-16 sticky top-0 z-40">
-        <Link
-          href="/dex"
-          className="flex items-center gap-1 active:opacity-70"
-        >
+      <header className="bg-surface text-primary font-display text-2xl font-bold border-b-[3px] border-on-background relative flex items-center justify-center w-full px-4 h-16 sticky top-0 z-40">
+        <Link href="/dex" className="absolute left-4 flex items-center gap-1 active:opacity-70">
           <span
             className="material-symbols-outlined"
             style={{ fontVariationSettings: "'FILL' 1" }}
@@ -32,10 +32,6 @@ export default async function AnimalDetailPage({
         </Link>
         <div className="font-display text-[32px] font-extrabold text-primary tracking-tighter">
           WildDex
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="material-symbols-outlined">signal_cellular_alt</span>
-          <span className="material-symbols-outlined">battery_charging_full</span>
         </div>
       </header>
 
@@ -49,54 +45,52 @@ export default async function AnimalDetailPage({
               #{animal.number}
             </span>
           </div>
-          <span className="text-9xl mb-4">{animal.emoji}</span>
+          <span className="text-9xl mb-4">
+            {isLocked ? animal.silhouette : animal.emoji}
+          </span>
           <h1 className="font-display text-[32px] font-extrabold text-on-background tracking-tighter">
-            {animal.name}
+            {isLocked ? "???" : animal.name}
           </h1>
         </section>
 
         {/* Stats grid */}
         <section className="grid grid-cols-2 gap-2">
-          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-2 hard-shadow flex flex-col items-center">
+          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-3 hard-shadow flex flex-col items-center">
             <span className="font-display text-[12px] font-bold text-on-surface-variant mb-1 tracking-widest">
               TYPE
             </span>
             <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-secondary">
-                pets
-              </span>
+              <span className="material-symbols-outlined text-secondary">pets</span>
               <span className="font-sans font-bold text-on-background capitalize">
-                {animal.type}
+                {isLocked ? "Unknown" : animal.type}
               </span>
             </div>
           </div>
-          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-2 hard-shadow flex flex-col items-center">
+          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-3 hard-shadow flex flex-col items-center">
             <span className="font-display text-[12px] font-bold text-on-surface-variant mb-1 tracking-widest">
               REGION
             </span>
             <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-primary">
-                forest
-              </span>
+              <span className="material-symbols-outlined text-primary">forest</span>
               <span className="font-sans font-bold text-on-background">
-                {animal.region}
+                {isLocked ? "Unknown" : animal.region}
               </span>
             </div>
           </div>
-          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-2 hard-shadow flex flex-col items-center">
+          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-3 hard-shadow flex flex-col items-center">
             <span className="font-display text-[12px] font-bold text-on-surface-variant mb-1 tracking-widest">
               RARITY
             </span>
             <span className="font-display text-[12px] font-bold text-on-background tracking-widest">
-              {rarityLabels[animal.rarity]}
+              {isLocked ? "LOCKED" : rarityLabels[animal.rarity]}
             </span>
           </div>
-          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-2 hard-shadow flex flex-col items-center">
+          <div className="bg-surface-container border-[3px] border-on-background rounded-lg p-3 hard-shadow flex flex-col items-center">
             <span className="font-display text-[12px] font-bold text-on-surface-variant mb-1 tracking-widest">
               LOCATION
             </span>
             <span className="font-sans text-sm font-bold text-on-background text-center">
-              {animal.caughtLocation}
+              {isLocked ? "Not logged" : animal.caughtLocation || "—"}
             </span>
           </div>
         </section>
@@ -107,12 +101,12 @@ export default async function AnimalDetailPage({
             DEX ENTRY
           </h2>
           <p className="font-sans text-base text-on-background leading-relaxed mt-1">
-            {animal.description}
+            {isLocked
+              ? "This species is still a mystery. Log a confirmed sighting to unlock the full WildDex entry."
+              : animal.description}
           </p>
           <div className="absolute bottom-2 right-2 animate-pulse">
-            <span className="material-symbols-outlined text-primary">
-              play_arrow
-            </span>
+            <span className="material-symbols-outlined text-primary">play_arrow</span>
           </div>
         </section>
 

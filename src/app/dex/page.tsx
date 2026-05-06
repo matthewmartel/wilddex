@@ -1,26 +1,28 @@
 import BottomNav from "@/components/BottomNav";
 import DexCard from "@/components/DexCard";
 import ProgressBar from "@/components/ProgressBar";
-import { animals, unlockedAnimals } from "@/lib/animals";
+import {
+  getAllSpecies,
+  getDiscoveredCount,
+  getSpeciesTotal,
+} from "@/lib/supabase/queries";
 
-export default function DexPage() {
-  const discovered = unlockedAnimals.length;
-  const total = animals.length;
-  const pct = Math.round((discovered / total) * 100);
+export default async function DexPage() {
+  const [animals, discovered, total] = await Promise.all([
+    getAllSpecies(),
+    getDiscoveredCount(),
+    getSpeciesTotal(),
+  ]);
+
+  const pct = total > 0 ? Math.round((discovered / total) * 100) : 0;
 
   return (
     <div className="pb-28 min-h-screen bg-surface pt-20">
       {/* Fixed Header */}
-      <header className="flex justify-between items-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background fixed top-0 z-50">
-        <span className="material-symbols-outlined text-primary text-2xl">
-          battery_charging_full
-        </span>
+      <header className="flex items-center justify-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background fixed top-0 z-50">
         <h1 className="font-display text-[32px] font-extrabold text-primary tracking-tighter">
           WildDex
         </h1>
-        <span className="material-symbols-outlined text-primary text-2xl">
-          signal_cellular_alt
-        </span>
       </header>
 
       <main className="max-w-md mx-auto px-4">

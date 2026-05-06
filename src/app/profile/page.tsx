@@ -1,14 +1,13 @@
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import Badge from "@/components/Badge";
-import { unlockedAnimals } from "@/lib/animals";
-
-const stats = [
-  { icon: "grid_view", value: "12", label: "Logged", color: "bg-primary-container" },
-  { icon: "explore", value: "3", label: "Regions", color: "bg-secondary-container", iconColor: "text-secondary" },
-  { icon: "star", value: "5", label: "Rare Finds", color: "bg-tertiary-container", iconColor: "text-tertiary" },
-  { icon: "local_fire_department", value: "7", label: "Day Streak", color: "bg-surface", iconColor: "text-error" },
-];
+import { createClient } from "@/lib/supabase/server";
+import {
+  getCurrentUserIsAdmin,
+  getDiscoveredCount,
+  getRecentSpecies,
+} from "@/lib/supabase/queries";
+import { logout } from "@/app/actions/auth";
 
 const badges = [
   { icon: "forest", label: "Forest Scout", color: "bg-primary", locked: false },
@@ -17,22 +16,44 @@ const badges = [
   { icon: "lock", label: "Locked", color: "bg-surface-variant", locked: true },
 ];
 
-const recentCatches = unlockedAnimals.slice(0, 3);
+function levelFromCount(n: number): number {
+  if (n >= 50) return 4;
+  if (n >= 25) return 3;
+  if (n >= 10) return 2;
+  return 1;
+}
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [discovered, recentCatches, isAdmin] = await Promise.all([
+    getDiscoveredCount(),
+    getRecentSpecies(3),
+    getCurrentUserIsAdmin(),
+  ]);
+
+  const username =
+    (user?.user_metadata?.username as string | undefined) ?? "Explorer";
+  const email = user?.email ?? "";
+  const level = levelFromCount(discovered);
+
+  const stats = [
+    { icon: "grid_view", value: String(discovered), label: "Logged", color: "bg-primary-container" },
+    { icon: "explore", value: "—", label: "Regions", color: "bg-secondary-container", iconColor: "text-secondary" },
+    { icon: "star", value: "—", label: "Rare Finds", color: "bg-tertiary-container", iconColor: "text-tertiary" },
+    { icon: "local_fire_department", value: "—", label: "Day Streak", color: "bg-surface", iconColor: "text-error" },
+  ];
+
   return (
     <div className="pb-28 min-h-screen bg-surface">
       {/* Header */}
-      <header className="flex justify-between items-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background sticky top-0 z-40">
-        <span className="material-symbols-outlined text-primary">
-          battery_charging_full
-        </span>
+      <header className="flex items-center justify-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background sticky top-0 z-40">
         <h1 className="font-display text-[32px] font-extrabold text-primary tracking-tighter">
           WildDex
         </h1>
-        <span className="material-symbols-outlined text-primary">
-          signal_cellular_alt
-        </span>
       </header>
 
       <main className="max-w-md mx-auto p-4 flex flex-col gap-4">
@@ -43,13 +64,11 @@ export default function ProfilePage() {
           </div>
           <div>
             <h2 className="font-display text-2xl font-extrabold text-on-background">
-              TrailMatt
+              {username}
             </h2>
-            <p className="font-sans text-sm text-on-surface-variant">
-              mattmartel14@gmail.com
-            </p>
+            <p className="font-sans text-sm text-on-surface-variant">{email}</p>
             <span className="inline-block mt-1 font-display text-[11px] font-bold text-on-primary bg-primary px-2 py-0.5 rounded-full border-[2px] border-on-background tracking-widest">
-              EXPLORER LVL 4
+              {isAdmin ? "ADMIN DEX" : `EXPLORER LVL ${level}`}
             </span>
           </div>
         </section>
@@ -84,7 +103,9 @@ export default function ProfilePage() {
             Discovery Map
           </h3>
           <div className="relative w-full h-48 border-[2px] border-on-background rounded bg-secondary-container overflow-hidden mb-2">
-            <div className="absolute inset-0 flex items-center justify-center text-8xl opacity-30">🗺️</div>
+            <div className="absolute inset-0 flex items-center justify-center text-8xl opacity-30">
+              🗺️
+            </div>
             <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-error border-[2px] border-on-background rounded-full shadow-[2px_2px_0_0_#1b1c1c]" />
             <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-tertiary border-[2px] border-on-background rounded-full shadow-[2px_2px_0_0_#1b1c1c]" />
             <div className="absolute bottom-1/4 left-1/2 w-4 h-4 bg-primary border-[2px] border-on-background rounded-full shadow-[2px_2px_0_0_#1b1c1c]" />
@@ -97,26 +118,28 @@ export default function ProfilePage() {
         </section>
 
         {/* Recent catches */}
-        <section>
-          <h3 className="font-display font-bold text-on-background mb-2 flex items-center gap-2">
-            <span className="material-symbols-outlined">photo_camera</span>
-            Recent Catches
-          </h3>
-          <div className="grid grid-cols-3 gap-2">
-            {recentCatches.map((animal) => (
-              <Link key={animal.id} href={`/animal/${animal.id}`}>
-                <div className="bg-surface border-[3px] border-on-background rounded-lg p-1 hard-shadow flex flex-col items-center hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer">
-                  <div className="w-full aspect-square border-[2px] border-on-background rounded bg-secondary-container mb-1 overflow-hidden flex items-center justify-center text-3xl">
-                    {animal.emoji}
+        {recentCatches.length > 0 && (
+          <section>
+            <h3 className="font-display font-bold text-on-background mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined">photo_camera</span>
+              Recent Catches
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              {recentCatches.map((animal) => (
+                <Link key={animal.id} href={`/animal/${animal.dexNumber}`}>
+                  <div className="bg-surface border-[3px] border-on-background rounded-lg p-1 hard-shadow flex flex-col items-center hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer">
+                    <div className="w-full aspect-square border-[2px] border-on-background rounded bg-secondary-container mb-1 overflow-hidden flex items-center justify-center text-3xl">
+                      {animal.emoji}
+                    </div>
+                    <span className="font-display text-[10px] font-bold text-center text-on-background tracking-wide">
+                      {animal.name}
+                    </span>
                   </div>
-                  <span className="font-display text-[10px] font-bold text-center text-on-background tracking-wide">
-                    {animal.name}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Badges */}
         <section className="bg-surface border-[3px] border-on-background rounded-lg p-2 hard-shadow">
@@ -144,13 +167,10 @@ export default function ProfilePage() {
             { icon: "notifications", label: "Notifications" },
             { icon: "privacy_tip", label: "Privacy" },
             { icon: "help", label: "Help & Feedback" },
-            { icon: "logout", label: "Sign Out" },
-          ].map((item, i, arr) => (
+          ].map((item) => (
             <button
               key={item.label}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-on-background hover:bg-secondary-container transition-colors ${
-                i < arr.length - 1 ? "border-b-[3px] border-on-background" : ""
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-on-background hover:bg-secondary-container transition-colors border-b-[3px] border-on-background`}
             >
               <span className="material-symbols-outlined text-on-surface-variant">
                 {item.icon}
@@ -163,6 +183,21 @@ export default function ProfilePage() {
               </span>
             </button>
           ))}
+          {/* Logout — Server Action via form */}
+          <form action={logout}>
+            <button
+              type="submit"
+              className="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container transition-colors"
+            >
+              <span className="material-symbols-outlined">logout</span>
+              <span className="font-sans text-sm font-medium flex-1 text-left">
+                Sign Out
+              </span>
+              <span className="material-symbols-outlined text-on-surface-variant">
+                chevron_right
+              </span>
+            </button>
+          </form>
         </section>
       </main>
 

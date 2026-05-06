@@ -10,16 +10,10 @@ export default function ScanPage() {
   return (
     <div className="pb-28 min-h-screen bg-surface">
       {/* Header */}
-      <header className="flex justify-between items-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background sticky top-0 z-40">
-        <span className="material-symbols-outlined text-primary">
-          battery_charging_full
-        </span>
+      <header className="flex items-center justify-center w-full px-4 h-16 bg-surface border-b-[3px] border-on-background sticky top-0 z-40">
         <h1 className="font-display text-[32px] font-extrabold text-primary tracking-tighter">
           WildDex
         </h1>
-        <span className="material-symbols-outlined text-primary">
-          signal_cellular_alt
-        </span>
       </header>
 
       <main className="max-w-md mx-auto p-4 flex flex-col gap-4">

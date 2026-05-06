@@ -17,7 +17,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface rounded-t-xl border-t-[3px] border-on-background"
+      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-6 items-center gap-1.5 bg-surface px-2 py-2 rounded-t-xl border-t-[3px] border-on-background sm:gap-2 sm:px-4 sm:py-3"
       style={{ boxShadow: "0 -4px 0 0 rgba(27,28,28,1)" }}
     >
       {navItems.map(({ href, icon, label }) => {
@@ -26,21 +26,22 @@ export default function BottomNav() {
           <Link
             key={href}
             href={href}
-            className={`flex flex-col items-center justify-center flex-1 min-w-0 py-2 px-1 rounded-lg transition-all ${
+            className={`flex h-14 min-w-0 flex-col items-center justify-center rounded-lg px-0.5 py-1 text-center transition-all sm:h-16 sm:px-1 sm:py-2 ${
               isActive
-                ? "bg-primary-container text-on-primary-container translate-x-[2px] translate-y-[2px] border-[3px] border-transparent"
-                : "text-on-surface-variant border-[3px] border-on-background bg-surface hover:bg-secondary-container shadow-[4px_4px_0_0_rgba(27,28,28,1)]"
+                ? "bg-primary-container text-on-primary-container border-2 border-transparent shadow-none sm:translate-x-[2px] sm:translate-y-[2px] sm:border-[3px]"
+                : "text-on-surface-variant border-2 border-on-background bg-surface shadow-[2px_2px_0_0_rgba(27,28,28,1)] hover:bg-secondary-container sm:border-[3px] sm:shadow-[4px_4px_0_0_rgba(27,28,28,1)]"
             }`}
+            aria-current={isActive ? "page" : undefined}
           >
             <span
-              className="material-symbols-outlined text-[22px] mb-1 leading-none"
+              className="material-symbols-outlined mb-0.5 text-[20px] leading-none sm:mb-1 sm:text-[22px]"
               style={{
                 fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
               }}
             >
               {icon}
             </span>
-            <span className="font-display text-[9px] font-bold tracking-normal leading-none">
+            <span className="w-full truncate font-display text-[8px] font-bold tracking-normal leading-none sm:text-[9px]">
               {label}
             </span>
           </Link>
