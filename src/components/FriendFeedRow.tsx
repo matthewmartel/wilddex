@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { FriendFeedItem } from "@/lib/supabase/queries";
-import { rarityColors } from "@/lib/animals";
+import { rarityColors, rarityLabels } from "@/lib/animals";
 import type { Rarity } from "@/lib/animals";
 
 function timeAgo(iso: string | null): string {
@@ -28,7 +28,7 @@ interface FriendFeedRowProps {
 export default function FriendFeedRow({ items, friendCount }: FriendFeedRowProps) {
   return (
     <section>
-      <div className="flex items-center justify-between mb-2 px-2">
+      <div className="flex items-center justify-between mb-3 px-2">
         <h2 className="font-display text-2xl font-bold text-on-background">
           Friends&apos; Sightings
         </h2>
@@ -63,72 +63,94 @@ export default function FriendFeedRow({ items, friendCount }: FriendFeedRowProps
           </Link>
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory">
-          {items.map((item) => {
-            const rarity = item.species_rarity as Rarity;
-            const cardColor =
-              rarityColors[rarity] ?? "bg-secondary-container";
-            const friendDisplay =
-              item.friend.display_name?.trim() || item.friend.username;
-            const location =
-              [item.location_name, item.region].filter(Boolean).join(", ") ||
-              null;
-            return (
-              <article
-                key={item.sighting_id}
-                className={`${cardColor} snap-start shrink-0 w-44 border-[3px] border-on-background rounded-lg hard-shadow flex flex-col overflow-hidden h-full`}
-              >
-                <Link
-                  href={`/animal/${item.dex_number}`}
-                  className="aspect-square bg-surface border-b-[3px] border-on-background flex items-center justify-center relative"
-                >
-                  {item.photoDisplayUrl ? (
-                    <div
-                      role="img"
-                      aria-label={`${item.species_name} sighting`}
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url("${item.photoDisplayUrl}")` }}
-                    />
-                  ) : (
-                    <span className="text-5xl">{item.species_sprite}</span>
-                  )}
-                </Link>
-                <div className="p-2 flex flex-col gap-1 bg-surface flex-1">
-                  <Link
-                    href={`/animal/${item.dex_number}`}
-                    className="font-display text-sm font-bold text-on-background truncate"
-                  >
-                    {item.species_name}
-                  </Link>
-                  <Link
-                    href={`/u/${item.friend.username}`}
-                    className="flex items-center gap-1.5 min-w-0"
-                  >
-                    <div className="h-5 w-5 shrink-0 overflow-hidden rounded-full border-[2px] border-on-background bg-primary flex items-center justify-center text-[10px]">
-                      {item.friend.avatar_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={item.friend.avatar_url}
-                          alt={friendDisplay}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        "🧭"
-                      )}
-                    </div>
-                    <span className="font-sans text-[11px] font-bold text-on-background truncate">
-                      {friendDisplay}
-                    </span>
-                  </Link>
-                  <p className="font-sans text-[10px] text-on-surface-variant truncate">
-                    {location ?? "Location hidden"} · {timeAgo(item.created_at)}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
+        <div className="flex flex-col gap-4">
+          {items.map((item) => (
+            <FeedCard key={item.sighting_id} item={item} />
+          ))}
         </div>
       )}
     </section>
+  );
+}
+
+function FeedCard({ item }: { item: FriendFeedItem }) {
+  const rarity = item.species_rarity as Rarity;
+  const rarityBg = rarityColors[rarity] ?? "bg-secondary-container";
+  const friendDisplay = item.friend.display_name?.trim() || item.friend.username;
+  const location =
+    [item.location_name, item.region, item.country].filter(Boolean).join(", ") ||
+    null;
+
+  return (
+    <article className="bg-surface border-[3px] border-on-background rounded-xl hard-shadow overflow-hidden flex flex-col">
+      {/* Header: friend identity */}
+      <Link
+        href={`/u/${item.friend.username}`}
+        className="flex items-center gap-3 px-3 py-2 bg-surface-container border-b-[3px] border-on-background"
+      >
+        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-[2px] border-on-background bg-primary flex items-center justify-center text-lg">
+          {item.friend.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={item.friend.avatar_url}
+              alt={friendDisplay}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            "🧭"
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-sm font-bold text-on-background truncate">
+            {friendDisplay}
+          </p>
+          <p className="font-sans text-[11px] text-on-surface-variant truncate">
+            @{item.friend.username} · {timeAgo(item.created_at)}
+          </p>
+        </div>
+      </Link>
+
+      {/* Photo or sprite */}
+      <Link
+        href={`/animal/${item.dex_number}`}
+        className={`${rarityBg} aspect-square border-b-[3px] border-on-background flex items-center justify-center relative`}
+      >
+        {item.photoDisplayUrl ? (
+          <div
+            role="img"
+            aria-label={`${item.species_name} sighting`}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url("${item.photoDisplayUrl}")` }}
+          />
+        ) : (
+          <span className="text-9xl select-none">{item.species_sprite}</span>
+        )}
+      </Link>
+
+      {/* Caption */}
+      <Link
+        href={`/animal/${item.dex_number}`}
+        className="flex flex-col gap-1 px-4 py-3"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-display text-xl font-extrabold text-on-background truncate">
+            #{String(item.dex_number).padStart(3, "0")} {item.species_name}
+          </h3>
+          <span className="shrink-0 font-display text-[10px] font-bold text-on-background tracking-widest border-[2px] border-on-background bg-surface-container px-2 py-0.5 rounded-full">
+            {rarityLabels[rarity] ?? rarity.toUpperCase()}
+          </span>
+        </div>
+        {location && (
+          <p className="font-sans text-sm text-on-surface-variant truncate">
+            {location}
+          </p>
+        )}
+        {item.notes && (
+          <p className="font-sans text-sm text-on-background leading-snug line-clamp-3 mt-1">
+            {item.notes}
+          </p>
+        )}
+      </Link>
+    </article>
   );
 }

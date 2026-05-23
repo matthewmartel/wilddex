@@ -49,7 +49,7 @@ export default async function HomePage() {
     getRecentSpecies(1),
     getUserStats(),
     getCurrentUserIsAdmin(),
-    getFriendsFeed(15),
+    getFriendsFeed(30),
     getFriends(),
     getActiveQuest(),
   ]);
