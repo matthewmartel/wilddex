@@ -36,6 +36,19 @@ export async function signup(
   redirect("/");
 }
 
+export async function requestPasswordReset(
+  _prevState: string | null,
+  formData: FormData
+): Promise<string | null> {
+  const supabase = await createClient();
+  const email = formData.get("email") as string;
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/reset`,
+  });
+  if (error) return error.message;
+  return "ok";
+}
+
 export async function logout(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();

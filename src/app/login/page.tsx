@@ -23,10 +23,13 @@ export default function LoginPage() {
       </div>
 
       {/* Form */}
-      <main className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full p-6 gap-4">
+      <main className="flex-1 flex flex-col justify-start max-w-sm mx-auto w-full px-6 pt-8 pb-6 gap-4">
         <h2 className="font-display text-2xl font-bold text-on-background">
           Welcome back!
         </h2>
+        <p className="font-sans text-xs text-on-surface-variant -mt-2">
+          We keep it simple — email and password only, no third-party logins.
+        </p>
 
         {error && (
           <div className="bg-error-container border-[3px] border-on-background rounded-lg p-3">
@@ -88,12 +91,27 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="text-center">
+        <div className="flex flex-col items-center gap-2">
           <Link
             href="/signup"
             className="font-sans text-sm text-secondary font-bold underline underline-offset-4 hover:text-primary transition-colors"
           >
             Don&apos;t have an account? Sign up
+          </Link>
+          <Link
+            href="/forgot-password"
+            className="font-sans text-xs text-on-surface-variant underline underline-offset-4 hover:text-primary transition-colors"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
+        <div className="text-center pt-2 border-t-[2px] border-on-background">
+          <Link
+            href="/"
+            className="font-display text-[11px] font-bold text-on-surface-variant tracking-widest hover:text-primary transition-colors"
+          >
+            ← EXPLORE WITHOUT SIGNING IN
           </Link>
         </div>
       </main>

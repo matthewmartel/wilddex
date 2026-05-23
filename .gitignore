@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# MCP config (contains secrets)
+.mcp.json
+
+# Playwright MCP artifacts (console logs, page snapshots, screenshots)
+/.playwright-mcp/
+# Loose screenshots at repo root (catch-all for one-off captures)
+/*.png
+
+# Personal scratch / scheduled-task state
+futureedits.txt
+.claude/

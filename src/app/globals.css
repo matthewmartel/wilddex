@@ -33,27 +33,163 @@
   --color-on-error: #ffffff;
   --color-on-error-container: #93000a;
 
+  /* Continent accent colors */
+  --color-amber: #b45309;
+  --color-amber-container: #fef3c7;
+  --color-on-amber: #ffffff;
+  --color-on-amber-container: #78350f;
+
+  --color-indigo: #4338ca;
+  --color-indigo-container: #e0e7ff;
+  --color-on-indigo: #ffffff;
+  --color-on-indigo-container: #312e81;
+
   /* Fonts */
   --font-sans: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
   --font-display: var(--font-lexend), "Lexend", sans-serif;
 }
 
+/* Shadow color adapts to mode */
+:root {
+  --wd-shadow: rgba(27, 28, 28, 1);
+}
+
 body {
-  background-color: #fcf9f8;
-  color: #1b1c1c;
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  overflow-x: hidden;
 }
 
 @utility hard-shadow {
-  box-shadow: 4px 4px 0px 0px rgba(27, 28, 28, 1);
+  box-shadow: 4px 4px 0px 0px var(--wd-shadow);
 }
 
 @utility hard-shadow-sm {
-  box-shadow: 2px 2px 0px 0px rgba(27, 28, 28, 1);
+  box-shadow: 2px 2px 0px 0px var(--wd-shadow);
 }
 
 @utility hard-shadow-active {
   &:active {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px rgba(27, 28, 28, 1);
+    box-shadow: 2px 2px 0px 0px var(--wd-shadow);
   }
+}
+
+/* ── Dark mode ── */
+html.dark {
+  color-scheme: dark;
+  --wd-shadow: rgba(0, 0, 0, 0.7);
+
+    /* Primary */
+    --color-primary: #56ae88;
+    --color-primary-container: #1a4535;
+    --color-on-primary: #002818;
+    --color-on-primary-container: #a8e6cf;
+
+    /* Secondary */
+    --color-secondary: #72c7cf;
+    --color-secondary-container: #1a464c;
+    --color-on-secondary: #002b30;
+    --color-on-secondary-container: #bce7ee;
+
+    /* Tertiary */
+    --color-tertiary: #cac670;
+    --color-tertiary-container: #464310;
+    --color-on-tertiary: #333000;
+    --color-on-tertiary-container: #e1dc96;
+
+    /* Surfaces */
+    --color-surface: #252826;
+    --color-surface-variant: #404544;
+    --color-surface-container: #353a37;
+    --color-surface-container-high: #424642;
+    --color-on-surface: #e2e8e4;
+    --color-on-surface-variant: #b5bdb8;
+    --color-on-background: #e2e8e4;
+
+    --color-outline: #7b8880;
+
+    /* Error */
+    --color-error: #ffb4ab;
+    --color-error-container: #93000a;
+    --color-on-error: #690005;
+    --color-on-error-container: #ffdad6;
+
+    /* Continent accent colors */
+    --color-amber: #fbbf24;
+    --color-amber-container: #78350f;
+    --color-on-amber: #451a03;
+    --color-on-amber-container: #fef3c7;
+
+    --color-indigo: #818cf8;
+    --color-indigo-container: #1e1b4b;
+    --color-on-indigo: #e0e7ff;
+    --color-on-indigo-container: #a5b4fc;
+}
+
+/* ── Mapbox popup overrides ── */
+.wd-popup-wrapper .mapboxgl-popup-content {
+  border-radius: 12px;
+  border: 3px solid var(--color-on-background);
+  box-shadow: 4px 4px 0 var(--color-on-background);
+  padding: 12px 16px;
+  background: var(--color-surface-container);
+}
+
+.wd-popup-wrapper .mapboxgl-popup-tip {
+  border-top-color: var(--color-surface-container);
+}
+
+.wd-popup-wrapper .mapboxgl-popup-close-button {
+  font-size: 18px;
+  color: var(--color-outline);
+  padding: 4px 8px;
+}
+
+.wd-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-display), "Lexend", sans-serif;
+  min-width: 140px;
+  text-align: center;
+}
+
+.wd-popup-emoji {
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.wd-popup-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.wd-popup-loc {
+  font-size: 11px;
+  color: var(--color-outline);
+}
+
+.wd-popup-date {
+  font-size: 10px;
+  color: var(--color-outline);
+  letter-spacing: 0.03em;
+}
+
+.wd-popup-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 14px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  border: 2px solid var(--color-on-background);
+  letter-spacing: 0.06em;
+  box-shadow: 2px 2px 0 var(--color-on-background);
 }

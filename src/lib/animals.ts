@@ -8,11 +8,12 @@ export interface Animal {
   emoji: string;     // sprite column
   silhouette: string;
   type: string;
-  region: string;    // default_region column
+  region: string;    // default_region column (biome/habitat)
+  continent: string; // continent column
   rarity: Rarity;
   description: string;
   unlocked: boolean;
-  caughtLocation?: string;
+  sightingLocation?: string;
 }
 
 export const rarityColors: Record<Rarity, string> = {
