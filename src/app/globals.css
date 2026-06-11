@@ -47,6 +47,55 @@
   /* Fonts */
   --font-sans: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
   --font-display: var(--font-lexend), "Lexend", sans-serif;
+
+  /* Motion */
+  --animate-fade-up: fade-up 0.4s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  --animate-pop-in: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-bar-fill: bar-fill 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes bar-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-pop-in,
+  .animate-fade-in,
+  .animate-bar-fill {
+    animation: none;
+  }
 }
 
 /* Shadow color adapts to mode */
@@ -72,6 +121,13 @@ body {
   &:active {
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0px 0px var(--wd-shadow);
+  }
+}
+
+@utility hard-shadow-sm-active {
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px 0px var(--wd-shadow);
   }
 }
 

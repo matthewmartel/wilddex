@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sprites": "node scripts/generate-sprites.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.2",
