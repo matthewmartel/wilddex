@@ -171,3 +171,14 @@ user_badges (
 - **Apple/Google Wallet badges** — exportable achievement cards
 - **AR viewfinder** — overlay species name on camera feed using on-device ML (TensorFlow.js or Core ML via a React Native port)
 - **Community hotspots** — crowd-sourced "good spots" pinned to the map by region
+
+---
+
+## Backlog (from scratch notes)
+
+Migrated from the old `futureedits.txt`; checked against the codebase June 2026.
+
+- [ ] **Biome-tagged map locations** — designate map areas with specific biomes so the region an animal was caught in is derived from where the photo was taken, not picked manually.
+- [ ] **Profile page button audit** — verify every button on `/profile` is wired up (edit and badges subpages exist; sweep for any remaining dead buttons).
+- [x] ~~Rename "Wildex" → "WildDex"~~ — done, no single-d occurrences remain in `src/`.
+- [x] ~~Uploaded photos tagged as GPS-unverified and excluded from badge progress~~ — done: `gps_verified` column exists and badge/quest queries filter on it (`src/lib/supabase/queries.ts`).

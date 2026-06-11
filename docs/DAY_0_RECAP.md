@@ -1,6 +1,6 @@
 # WildDex Day 0 Recap
 
-This recap separates the inherited WildDex work from the work completed with Codex during Day 0. The older `README.md` and `ROADMAP.md` still describe an earlier frontend-only state, so this file reflects the current project state at the end of Day 0.
+This recap separates the inherited WildDex work from the work completed with Codex during Day 0. The older `../README.md` and `ROADMAP.md` (sibling file in `docs/`) still describe an earlier frontend-only state, so this file reflects the current project state at the end of Day 0.
 
 ## Work Completed Before Codex
 

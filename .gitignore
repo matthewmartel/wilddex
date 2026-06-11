@@ -49,5 +49,4 @@ next-env.d.ts
 /*.png
 
 # Personal scratch / scheduled-task state
-futureedits.txt
 .claude/
