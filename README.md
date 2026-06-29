@@ -1,6 +1,12 @@
 # WildDex
 
+**Live site: [wilddex.app](https://wilddex.app)**
+
 WildDex is a mobile-first web app where users upload photos of real animals, confirm the species, unlock animals in a numbered Dex, and view their sightings on a personal map.
+
+## Deployment
+
+WildDex is deployed on [Vercel](https://vercel.com) and served at [wilddex.app](https://wilddex.app). Every push to `main` automatically builds and deploys to production. Environment variables are configured in the Vercel project settings (mirroring `.env.example`).
 
 ## Run it on your computer
 
